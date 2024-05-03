@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="AI Forecast of Surface Solar Irradiance from Meteo Satellite Data">
+  <meta name="keywords" content="Surface irradiance, Forecasting, Deep learning, Meteosat, Solar energy">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- 
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:image:src" content="http://marigoldmonodepth.github.io/images/marigold_logo_square.jpg">
+  <meta name="twitter:title" content="Marigold Depth">
+  <meta name="twitter:description" content="Repurposing Diffusion-Based Image Generators for Monocular Depth Estimation">
+  <meta name="twitter:creator" content="@AntonObukhov1"> 
+  -->
+
+  <title>AI Forecast of Surface Solar Irradiance from Meteo Satellite Data</title>
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-1FWSVCGZTG"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-1FWSVCGZTG');
+  </script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./css/bulma.min.css">
+  <link rel="stylesheet" href="./css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./css/twentytwenty.css">
+  <link rel="stylesheet" href="./css/index.css">
+  <!-- <link rel="icon" href="./images/favicon.svg"> -->
+
+  <script src="./js/jquery-3.2.1.min.js"></script>
+  <script src="./js/jquery.event.move.js"></script>
+  <script src="./js/jquery.twentytwenty.js"></script>
+  <script src="./js/bulma-carousel.min.js"></script>
+  <script src="./js/bulma-slider.min.js"></script>
+  <script src="./js/fontawesome.all.min.js"></script>
+
+  <!--MathJax-->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">AI Forecast of Surface Solar Irradiance from Meteo Satellite Data</h1>
+          <h3 class="title has-text-centered">Remote Sensing of Environment (under review)</h3>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://alessandrosebastianelli.github.io/" target="_blank" rel="noopener noreferrer">
+                Alessandro Sebastianelli (1)</a>,
+            </span>
+            <span class="author-block">
+              <a href="https://fserva.github.io/" target="_blank" rel="noopener noreferrer">
+                Federico Serva (1,2) </a>,
+            </span>
+            <span class="author-block">
+              <a href="https://www.linkedin.com/in/andrea-ceschini/" target="_blank" rel="noopener noreferrer">
+                Andrea Ceschini (3) </a>,
+            </span>
+            <span class="author-block">
+              <a href="https://www.linkedin.com/in/quentin-paletta-3855b412b/" target="_blank" rel="noopener noreferrer">
+                Quentin Paletta (1) </a>,
+            </span>
+            <span class="author-block">
+              <a href="https://www.linkedin.com/in/massimopanella/" target="_blank" rel="noopener noreferrer">
+                Massimo Panella (3) </a>,
+            </span>
+            <span class="author-block">
+              <a href="https://blesaux.github.io/" target="_blank" rel="noopener noreferrer">
+                Bertrand Le Saux (1)</a>
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">(1) European Space Agency, (2) National Research Council (Italy), (3) La Sapienza University of Rome</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <span class="link-block">
+                <a href="https://arxiv.org/" target="_blank" rel="noopener noreferrer"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf" style="color: orangered"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="https://github.com/" target="_blank" rel="noopener noreferrer"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <iframe id="teaser" width="800" height="550" allow="autoplay; encrypted-media" frameborder="0" src="https://www.youtube.com/embed/lpkcNnp1shI?si=slZ092c31lTGl_bZ?autoplay=1&enable_js=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+      <!-- <h2 class="subtitle has-text-centered">
+        <span class="methodname">Marigold</span> is the new state-of-the-art depth estimator for images in the wild.
+      </h2> -->
+    </div>
+  </div>
+</section>
+
+
+<section class="section pt-0">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Overview</h2>
+        <div class="content has-text-justified">
+          <p>
+            In order to facilitate the shift towards sustainable practices and to support the green transition, there is a requirement
+            for faster and more accurate predictions of solar irradiance. This is essential for the establishment of solar farms
+            and the enhancement of energy grid management. This paper presents a novel approach to forecast surface solar
+            irradiance up to 24 hours in advance, utilizing various machine learning and deep learning architectures. Our proposed
+            Artificial Intelligence (AI) models include both pixel-based and image-based solutions, offering a comprehensive
+            exploration of different methodologies. Our forecasters leverage two days of input data to predict the next day of solar
+            exposure at country scale. To assess the models’ performance, extensive testing is conducted across three distinct
+            geographical areas of interest: Austria (where models were trained and validated), Switzerland and Italy (where we
+            tested our models under a transfer learning regime). The study incorporates comparisons with established benchmarks,
+            including state-of-the-art numerical weather predictions, as well as fundamental predictors such as climatology and
+            persistence. Our findings reveal that the AI-based methods clearly outperform traditional forecasting techniques,
+            demonstrating high accuracy and reliability in predicting surface solar irradiance. This research not only contributes
+            to the advancement of solar energy forecasting but also highlights the effectiveness of machine learning and deep
+            learning models in being competitive to conventional methods for short-term solar irradiance predictions.
+          </p>
+
+          <p>
+            The gallery below presents results on three areas of interest, putting in comparison one our model and the ground thruth. 
+            Use the slider and gestures to reveal details on both sides.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Abstract. -->
+  </div>
+</section>
+
+
+<section class="hero is-light is-small">
+  <div class="hero-body">
+    <div class="container">
+      <div id="results-carousel-horizontal" class="carousel results-carousel">
+
+        <div class="twoitem">
+          <div class="twentytwenty-container twentytwenty-container-top">
+            <div class="cmpcontent">
+              <img src="./images/int2012_aut_gt.png">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/int2012_aut_blstm.png">
+            </div>
+          </div>
+          <div class="twentytwenty-container twentytwenty-container-bottom">
+            <div class="cmpcontent">
+              <img src="./images/int2013_aut_gt.png">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/int2013_aut_blstm.png">
+            </div>
+          </div>
+        </div>
+
+        <div class="twoitem">
+          <div class="twentytwenty-container twentytwenty-container-top">
+            <div class="cmpcontent">
+              <img src="./images/int2014_che_gt.png">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/int2014_che_blstm.png">
+            </div>
+          </div>
+        </div>
+
+        <div class="twoitem">
+          <div class="twentytwenty-container twentytwenty-container-top">
+            <div class="cmpcontent">
+              <img src="./images/int2016_ita_gt.png">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/int2016_ita_blstm.png">
+            </div>
+          </div>
+        </div>
+
+        
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 
+  <section class="hero is-light is-small">
+  <div class="hero-body">
+    <div class="container">
+      <div id="results-carousel-vertical" class="carousel results-carousel">
+
+        <div class="twoitem">
+          <div class="twentytwenty-container twentytwenty-container-top">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/8A10BC4E-4963-4885-8F30-8B28F3F8AB2B-78098-0000351063D6ECE7_crop43.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/8A10BC4E-4963-4885-8F30-8B28F3F8AB2B-78098-0000351063D6ECE7_crop43_ours.jpg">
+            </div>
+          </div>
+          <div class="twentytwenty-container twentytwenty-container-bottom">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/8A10BC4E-4963-4885-8F30-8B28F3F8AB2B-78098-0000351063D6ECE7_crop43_leres.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/8A10BC4E-4963-4885-8F30-8B28F3F8AB2B-78098-0000351063D6ECE7_crop43_ours.jpg">
+            </div>
+          </div>
+        </div>
+
+        <div class="twoitem">
+          <div class="twentytwenty-container twentytwenty-container-top">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/DJI_0189_crop43.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/DJI_0189_crop43_ours.jpg">
+            </div>
+          </div>
+          <div class="twentytwenty-container twentytwenty-container-bottom">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/DJI_0189_crop43_leres.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/DJI_0189_crop43_ours.jpg">
+            </div>
+          </div>
+        </div>
+
+        <div class="twoitem">
+          <div class="twentytwenty-container twentytwenty-container-top">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/DJI_0221-HDR_crop_crop43.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/DJI_0221-HDR_crop_crop43_ours.jpg">
+            </div>
+          </div>
+          <div class="twentytwenty-container twentytwenty-container-bottom">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/DJI_0221-HDR_crop_crop43_leres.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/DJI_0221-HDR_crop_crop43_ours.jpg">
+            </div>
+          </div>
+        </div>
+
+        <div class="twoitem">
+          <div class="twentytwenty-container twentytwenty-container-top">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/DSC00058-HDR_crop43.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/DSC00058-HDR_crop43_ours.jpg">
+            </div>
+          </div>
+          <div class="twentytwenty-container twentytwenty-container-bottom">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/DSC00058-HDR_crop43_leres.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/DSC00058-HDR_crop43_ours.jpg">
+            </div>
+          </div>
+        </div>
+
+        <div class="twoitem">
+          <div class="twentytwenty-container twentytwenty-container-top">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/DSC01162_crop43.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/DSC01162_crop43_ours.jpg">
+            </div>
+          </div>
+          <div class="twentytwenty-container twentytwenty-container-bottom">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/DSC01162_crop43_leres.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/DSC01162_crop43_ours.jpg">
+            </div>
+          </div>
+        </div>
+
+        <div class="twoitem">
+          <div class="twentytwenty-container twentytwenty-container-top">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/DSC00152-HDR_crop43.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/DSC00152-HDR_crop43_ours.jpg">
+            </div>
+          </div>
+          <div class="twentytwenty-container twentytwenty-container-bottom">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/DSC00152-HDR_crop43_leres.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/DSC00152-HDR_crop43_ours.jpg">
+            </div>
+          </div>
+        </div>
+
+        <div class="twoitem">
+          <div class="twentytwenty-container twentytwenty-container-top">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/IMG-20231111-WA0001.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/IMG-20231111-WA0001_ours.jpg">
+            </div>
+          </div>
+          <div class="twentytwenty-container twentytwenty-container-bottom">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/IMG-20231111-WA0001_leres.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/IMG-20231111-WA0001_ours.jpg">
+            </div>
+          </div>
+        </div>
+
+        <div class="twoitem">
+          <div class="twentytwenty-container twentytwenty-container-top">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/img_0810_crop43.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/img_0810_crop43_ours.jpg">
+            </div>
+          </div>
+          <div class="twentytwenty-container twentytwenty-container-bottom">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/img_0810_crop43_leres.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/img_0810_crop43_ours.jpg">
+            </div>
+          </div>
+        </div>
+
+        <div class="twoitem">
+          <div class="twentytwenty-container twentytwenty-container-top">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/IMG_7860-Edit_crop43.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/IMG_7860-Edit_crop43_ours.jpg">
+            </div>
+          </div>
+          <div class="twentytwenty-container twentytwenty-container-bottom">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/IMG_7860-Edit_crop43_leres.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/IMG_7860-Edit_crop43_ours.jpg">
+            </div>
+          </div>
+        </div>
+
+        <div class="twoitem">
+          <div class="twentytwenty-container twentytwenty-container-top">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/IMG_20230223_201232.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/IMG_20230223_201232_ours.jpg">
+            </div>
+          </div>
+          <div class="twentytwenty-container twentytwenty-container-bottom">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/IMG_20230223_201232_leres.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/IMG_20230223_201232_ours.jpg">
+            </div>
+          </div>
+        </div>
+
+        <div class="twoitem">
+          <div class="twentytwenty-container twentytwenty-container-top">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/IMG_20230531_162636.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/IMG_20230531_162636_ours.jpg">
+            </div>
+          </div>
+          <div class="twentytwenty-container twentytwenty-container-bottom">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/IMG_20230531_162636_leres.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/IMG_20230531_162636_ours.jpg">
+            </div>
+          </div>
+        </div>
+
+        <div class="twoitem">
+          <div class="twentytwenty-container twentytwenty-container-top">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/IMG_20230818_201603.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/IMG_20230818_201603_ours.jpg">
+            </div>
+          </div>
+          <div class="twentytwenty-container twentytwenty-container-bottom">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/IMG_20230818_201603_leres.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/IMG_20230818_201603_ours.jpg">
+            </div>
+          </div>
+        </div>
+
+        <div class="twoitem">
+          <div class="twentytwenty-container twentytwenty-container-top">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/marigold-4549334_1280.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/marigold-4549334_1280_ours.jpg">
+            </div>
+          </div>
+          <div class="twentytwenty-container twentytwenty-container-bottom">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/marigold-4549334_1280_leres.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/marigold-4549334_1280_ours.jpg">
+            </div>
+          </div>
+        </div>
+
+        <div class="twoitem">
+          <div class="twentytwenty-container twentytwenty-container-top">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/pete-walls-92JRuvQZfKs-unsplash_crop43.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/pete-walls-92JRuvQZfKs-unsplash_crop43_ours.jpg">
+            </div>
+          </div>
+          <div class="twentytwenty-container twentytwenty-container-bottom">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/pete-walls-92JRuvQZfKs-unsplash_crop43_leres.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/pete-walls-92JRuvQZfKs-unsplash_crop43_ours.jpg">
+            </div>
+          </div>
+        </div>
+
+        <div class="twoitem">
+          <div class="twentytwenty-container twentytwenty-container-top">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/S-IC_engines_and_Von_Braun_crop43.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/S-IC_engines_and_Von_Braun_crop43_ours.jpg">
+            </div>
+          </div>
+          <div class="twentytwenty-container twentytwenty-container-bottom">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/S-IC_engines_and_Von_Braun_crop43_leres.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/S-IC_engines_and_Von_Braun_crop43_ours.jpg">
+            </div>
+          </div>
+        </div>
+
+        <div class="twoitem">
+          <div class="twentytwenty-container twentytwenty-container-top">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/Ticino_crop43.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/Ticino_crop43_ours.jpg">
+            </div>
+          </div>
+          <div class="twentytwenty-container twentytwenty-container-bottom">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/Ticino_crop43_leres.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/Ticino_crop43_ours.jpg">
+            </div>
+          </div>
+        </div>
+
+        <div class="twoitem">
+          <div class="twentytwenty-container twentytwenty-container-top">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/WechatIMG1282.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/WechatIMG1282_ours.jpg">
+            </div>
+          </div>
+          <div class="twentytwenty-container twentytwenty-container-bottom">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/WechatIMG1282_leres.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/WechatIMG1282_ours.jpg">
+            </div>
+          </div>
+        </div>
+
+        <div class="twoitem">
+          <div class="twentytwenty-container twentytwenty-container-top">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/WechatIMG17503.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/WechatIMG17503_ours.jpg">
+            </div>
+          </div>
+          <div class="twentytwenty-container twentytwenty-container-bottom">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/WechatIMG17503_leres.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/WechatIMG17503_ours.jpg">
+            </div>
+          </div>
+        </div>
+
+        <div class="twoitem">
+          <div class="twentytwenty-container twentytwenty-container-top">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/WechatIMG17509.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/WechatIMG17509_ours.jpg">
+            </div>
+          </div>
+          <div class="twentytwenty-container twentytwenty-container-bottom">
+            <div class="cmpcontent">
+              <img src="./images/inthewild/WechatIMG17509_leres.jpg">
+            </div>
+            <div class="cmpcontent">
+              <img src="./images/inthewild/WechatIMG17509_ours.jpg">
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section> 
+-->
+
+<script>
+  $(window).on('load', function() {
+    bulmaCarousel.attach('#results-carousel-horizontal', {
+      slidesToScroll: 1,
+      slidesToShow: 3,
+      loop: true,
+      autoplay: true,
+    });
+
+    bulmaCarousel.attach('#results-carousel-vertical', {
+      slidesToScroll: 1,
+      slidesToShow: 5,
+      loop: true,
+      autoplay: true,
+    });
+
+    $(".twentytwenty-container-top").twentytwenty({
+      before_label: 'Ground Truth',
+      after_label: 'bLSTM',
+      default_offset_pct: 0.75,
+    });
+    $(".twentytwenty-container-bottom").twentytwenty({
+      before_label: 'Ground Truth',
+      after_label: 'bLSTM',
+      default_offset_pct: 0.5,
+    });
+  });
+</script>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Method. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">How it works</h2>
+        <div class="content has-text-justified">
+
+          <p>
+            Flowchart of our forecasting procedure: surface solar irradiances obtained from Meteosat data are extracted over the region of interest
+            (elevation with grey shadings, top plots). For grid-point predictions (bottom plots), a 2-day time series (bottom left, 48h) is used as input for ML
+            models, providing a day ahead (bottom right, 24h) prediction.
+          </p>
+
+          <img id="method_train" width="100%" src="./images/model.png" alt="Flowchart of our SIS forecasting procedure"/>
+
+
+          <h3 class="title has-text-centered">
+            Results
+          </h3>
+
+          <p>
+            We compare the overall forecast results of all the models, i.e. the results of a 24 hours-ahead prediction averaged over time sequences
+            spanning from 2012 to 2017. The bLSTM model outperforms other models in terms of normalized mean absolute error (nMAE). Note that
+            normalization is done separately by season, since annual variations are very large. This indicates that the bLSTM model is the most 
+            accurate model for forecasting solar irradiance values.
+          </p>
+
+          <img id="comparison" width="100%" src="./images/results.png" alt="Error (nMAE) values calculated for the validation period (2012-2017) for Austria divided by seasons. For all season, the bLSTM is
+          outclassing the other models including the standard Numerical Weather Prediction (NWP)."/>
+
+          <p class="mt-5">
+            Refer to the pdf paper linked above for more details on qualitative and quantitatives results.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Method. -->
+  </div>
+</section>
+
+
+<section class="section pt-0" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">Citation</h2>
+    <pre class="selectable"><code>@InProceedings{sis2024forecasting,
+        title={AI Forecast of Surface Solar Irradiance from Meteo Satellite Data},
+        author={Sebastianelli, Alessandro and Serva, Federico and Ceschini, Andrea and Paletta, Quentin and Panella, Massimo and Le Saux, Bertrand},
+        booktitle = {Submitted to Remote Sensing of Environment},
+        year={2024}
+}</code></pre>
+  </div>
+</section>
+
+
+<footer class="footer pt-4 pb-0">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            Website template based on
+            <a href="https://github.com/nerfies/nerfies.github.io">
+              Nerfies
+            </a>
+            and licensed under
+            <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+              CC-BY-SA-4.0
+            </a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
